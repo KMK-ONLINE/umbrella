@@ -1,0 +1,21 @@
+# The main story of this experiment was
+# test rds_param_group module is work using aws variable value
+# Because at boto have issue with basestring value
+# https://github.com/boto/boto/pull/3375
+#
+# ansible-playbook rds_params.yml -i hosts -e "aws_access_key=xxxx aws_secret_key=xxxx pg_name=xxxx pg_engine=xxxx"
+#
+
+- hosts: local
+  connection: local
+  become: false
+
+  tasks:
+    - rds_param_group:
+          state: present
+          name: {{ pg_name }}
+          description: "Database parameter group"
+          engine: {{ pg_engine }}
+          params:
+             work_mem: '262144'
+          # work_mem: '{DBInstanceClassMemory/204802}'
