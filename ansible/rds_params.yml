@@ -13,9 +13,9 @@
   tasks:
     - rds_param_group:
           state: present
-          name: {{ pg_name }}
+          name: '{{ pg_name }}'
           description: "Database parameter group"
-          engine: {{ pg_engine }}
+          engine: '{{ pg_engine }}'
           params:
              work_mem: '262144'
           # work_mem: '{DBInstanceClassMemory/204802}'
