@@ -1,0 +1,13 @@
+- name: Make some directory at mnt
+  hosts: local
+  connection: local
+
+  tasks:
+    - file: path=/not_there/ansible_test owner=root group=root mode=0666 state=directory
+      become: no
+
+    - file: path=/mnt/ansible_test owner=root group=root mode=0666 state=directory
+      become: yes
+
+    - file: path=/mnt/{{ dir_name }} owner=root group=root mode=0666 state=directory
+      become: yes
