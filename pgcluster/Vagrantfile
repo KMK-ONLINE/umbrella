@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "PGC"
+  # you may need to change this url, this from our local box
+  config.vm.box_url = "http://vagrantbox.kmklabs.lan/ubuntu_trusty64.box"
+
+  config.vm.hostname = "PGC"
+  config.vm.network :forwarded_port, guest: 22, host: 2288, id: 'ssh'
+  config.ssh.port = 2288
+  config.ssh.insert_key = false
+
+  config.vm.network :private_network, ip: "10.10.10.88"
+
+  config.ssh.forward_agent = true
+
+  config.vm.synced_folder ".", "/vagrant",        disabled: true
+  config.vm.synced_folder ".", "/blind_vagrant",  disabled: false, type: "nfs"
+
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory",  "2048"]
+    vb.customize ["modifyvm", :id, "--acpi",    "on"]
+    vb.customize ["modifyvm", :id, "--ioapic",  "off"]
+    vb.customize ["modifyvm", :id, "--cpus",    "1"]
+  end
+
+ config.vm.provision "ansible" do |ansible|
+    ansible.host_key_checking = false
+    ansible.playbook = "pg_cluster.yml"
+    ansible.limit = 'all'
+    ansible.inventory_path = "vagrant-host"
+    ansible.verbose = 'vvvv'
+  end
+
+
+end

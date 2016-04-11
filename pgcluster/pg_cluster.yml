@@ -1,0 +1,95 @@
+- name: pg-cluster provisioning
+  hosts: vagrant
+  become: true
+
+  tasks:
+    - name: Add postgresql repo
+      apt_repository:
+        repo='deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
+        state=present
+
+    - name: Add postgresql key
+      apt_key:
+        url=https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state=present
+
+    - name: Install postgresql 9.5
+      apt:
+        name=postgresql-9.5
+        update_cache=yes
+        state=present
+
+    - name: Add slave cluster
+      command: pg_createcluster 9.5 slave
+      ignore_errors: true
+
+    - name: Copy pg_hba main psotgres
+      copy: src=pg_hba.conf dest=/etc/postgresql/9.5/main/pg_hba.conf owner=postgres group=postgres mode=0640
+
+    - name: Copy pg_hba slave psotgres
+      copy: src=pg_hba.conf dest=/etc/postgresql/9.5/slave/pg_hba.conf owner=postgres group=postgres mode=0640
+
+    - name: Restart postgresql
+      service:
+        name=postgresql
+        state=restarted
+
+    - name: Install pgpool2
+      apt:
+        name=pgpool2
+        update_cache=yes
+        state=present
+
+    - name: Configure pgpool2 configuration host slave
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^#backend_hostname1 = 'host2'"
+        line="backend_hostname1 = 'localhost'"
+
+    - name: Configure pgpool2 configuration port slave
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^#backend_port1 = 5433"
+        line="backend_port1 = 5433"
+
+    - name: Configure pgpool configuration backend weight slave
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^#backend_weight1 = 1"
+        line="backend_weight1 = 1"
+
+    - name: Configure pgpool2 configuration backend data slave directory
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^#backend_data_directory1 = '/data1'"
+        line="backend_data_directory1 = '/etc/postgresql/9.5/slave/'"
+
+    - name: Configure pgpool2 configuration backend flag slave
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^#backend_flag1 = 'ALLOW_TO_FAILOVER'"
+        line="backend_flag1 = 'ALLOW_TO_FAILOVER'"
+
+    - name: Configure pgpool2 enable configuration pool hba
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^enable_pool_hba = off"
+        line="enable_pool_hba = on"
+
+    - name: Configure pgpool2 disable configuration pool passwd
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^pool_passwd = 'pool_passwd'"
+        line="pool_passwd = ''"
+
+    - name: Configure pgpool2 enable configuration replication
+      lineinfile:
+        dest=/etc/pgpool2/pgpool.conf
+        regexp="^replication_mode = off"
+        line="replication_mode = on"
+
+    - name: Restart pgpool2
+      service:
+        name=pgpool2
+        state=restarted
+
