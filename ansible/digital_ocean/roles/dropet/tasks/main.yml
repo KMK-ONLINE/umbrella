@@ -1,0 +1,14 @@
+- name: Provision Dropet
+  digital_ocean: >
+      state={{dropet_state}}
+      command=droplet
+      id={{host_id}}
+      name={{host_name}}
+      client_id={{client_id}}
+      api_key={{api_key}}
+      ssh_key_ids={{ id_ssh_key }}
+      size_id={{host_size_id}}
+      private_networking=True
+      region_id={{ id_region }}
+      image_id=5141286
+      wait_timeout=500

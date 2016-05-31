@@ -1,0 +1,7 @@
+- name : Provision Dropet
+  user: root
+  hosts: {{ web_host_name }}
+  gather_facts: True
+
+  roles:
+    - {role: dropet, dropet_state: {{ state_dropet }}, host_id: '{{ web_host_id }}', host_name: '{{ web_host_name }}', host_size_id: '{{ web_host_size_id }}' }
