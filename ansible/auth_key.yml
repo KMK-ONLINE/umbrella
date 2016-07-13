@@ -1,0 +1,17 @@
+- name: Test Auth key
+  hosts: local
+  gather_facts: yes
+  connection: local
+  become: no
+
+  tasks:
+    - name: Remove old auth file
+      file: path="/home/{{ ansible_user_id }}/.ssh/authorized_keys" state=absent
+
+    - name: Copy Auth key to remote host, you may need create the test key self
+      authorized_key:
+        user: "{{ ansible_user_id }}"
+        key: "{{ lookup('file', 'testkey.pub') }}"
+
+
+

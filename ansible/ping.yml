@@ -1,0 +1,9 @@
+- name: Test ping
+  hosts: all
+  gather_facts: yes
+  connection: paramiko
+  become: no
+
+  tasks:
+    - name: PingPong
+      action: ping
