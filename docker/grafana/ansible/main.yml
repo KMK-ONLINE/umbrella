@@ -1,0 +1,33 @@
+# This should be your Ansible playbooks to provision your containers.
+# An inventory will be automatically created using the names of the services
+# from your container.yml file.
+# Add any roles or other modules you'll need to this directory too.
+# For many examples of roles, check out Ansible Galaxy: https://galaxy.ansible.com/
+#
+---
+- hosts: all
+  gather_facts: false
+  vars_files:
+        - 'var.secret.yml'
+  tasks:
+    - name: apt get update
+      raw: apt-get update
+
+    - name: install python
+      raw: apt-get install -y python-minimal apt-transport-https
+
+    - name: add grafana repository
+      apt_repository: repo='deb https://packagecloud.io/grafana/stable/debian/ jessie main' state=present
+
+    - name: add apt grafana key
+      apt_key: url=https://packagecloud.io/gpg.key state=present
+
+    - name: install grafana
+      apt: pkg=grafana update_cache=yes state=present
+
+    - name: Make aws credential directory
+      file: path="/root/.aws" state=directory
+
+    - name: copy aws credential
+      template: src=credentials.j2 dest=/root/.aws/credentials
+
