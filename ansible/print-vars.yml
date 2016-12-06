@@ -1,0 +1,40 @@
+- hosts: localhost
+  connection: local
+
+
+  tasks:
+    - name: print varibale satu
+      debug: msg={{satu}}
+
+    - name: print varibale dua
+      debug: msg={{dua}}
+
+    - name: print varibale bilangan
+      debug: msg={{bilangan}}
+
+    - name: print varibale spechar
+      debug: msg={{spechar}}
+
+    - name: print varibale streng
+      debug: msg={{streng}}
+
+    - name: print varibale lesto
+      debug: msg={{lesto}}
+
+    - name: print varibale mona
+      debug: msg={{lesto.mona}}
+
+    - name: print varibale dicto
+      debug: msg={{dicto}}
+
+    - name: print varibale dicto[0]
+      debug: msg={{dicto[0]}}
+
+    - name: print varibale dicto[0].nam
+      debug: msg={{dicto[0].nam}}
+
+    - name: print two variable dicto[0].nam and streng together
+      debug: msg={{dicto[0].nam+streng}}
+
+    - name: print varibale kosong
+      debug: msg={{kosong}}

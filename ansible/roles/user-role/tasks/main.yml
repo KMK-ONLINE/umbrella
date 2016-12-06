@@ -1,0 +1,6 @@
+- name: not become
+  debug: msg={{ansible_user}}
+
+- name: become
+  debug: msg={{ansible_user}}
+  become: yes

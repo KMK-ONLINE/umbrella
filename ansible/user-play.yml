@@ -1,0 +1,18 @@
+- hosts: localhost
+  connection: local
+
+  roles:
+    - { role: user-meta }
+    - { role: user-meta, become: yes }
+
+- hosts: localhost
+  connection: local
+  become: yes
+
+  roles:
+    - { role: user-meta }
+    - { role: user-meta, become: yes }
+
+
+  tasks:
+      - shell: touch /mnt/abc.test.X
