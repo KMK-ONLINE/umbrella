@@ -1,0 +1,7 @@
+- hosts: vagrant-lxd
+  become: yes
+
+  roles:
+    - role: common
+    - role: nginx
+    - role: varnish

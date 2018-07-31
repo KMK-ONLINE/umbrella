@@ -1,0 +1,44 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure("2") do |config|
+  config.vm.define "vagrant-lxd"
+
+  config.vm.box = "arjenvrielink/xenial64-lxc"
+
+  config.vm.hostname = "lxd.vagrant"
+  config.ssh.insert_key = false
+
+  # If true, then any SSH connections made will enable agent forwarding.
+  # Default value: false
+  config.ssh.forward_agent = true
+
+  # Provider-specific configuration so you can fine-tune various
+  # backing providers for Vagrant. These expose provider-specific options.
+
+  config.vm.provider :lxd do |lxd|
+    lxd.api_endpoint = 'https://127.0.0.1:8443'
+    lxd.timeout = 10
+    lxd.name = "vagrant-lxd"
+    lxd.nesting = nil
+    lxd.privileged = nil
+    lxd.ephemeral = false
+    lxd.profiles = ['default']
+    lxd.environment = {}
+    lxd.config = {}
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.host_key_checking = false
+    ansible.playbook = "vagrant-lxd.yml"
+    ansible.inventory_path = "inventory/"
+    ansible.tags = ENV['VAGRANT_TAGS']
+    ansible.extra_vars = JSON.load(ENV['VAGRANT_EXTRA_VARS'])
+    ansible.verbose = 'v'
+  end
+
+
+end

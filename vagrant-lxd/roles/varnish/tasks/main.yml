@@ -1,0 +1,5 @@
+- name: Install Varnish
+  apt:
+    name: varnish
+    state: present
+  tags: varnish
